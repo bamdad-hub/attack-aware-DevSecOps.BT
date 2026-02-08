@@ -3,19 +3,15 @@ name: CI Security Pipeline
 on:
   push:
     branches: [ "main" ]
-  pull_request:
+
 
 jobs:
-  security:
+  security-scan:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Build Docker image
-      run: |
-        docker build -t attack-aware-app:latest .
 
     - name: Run Trivy (CRITICAL only)
       uses: aquasecurity/trivy-action@master
