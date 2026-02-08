@@ -12,6 +12,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+    
+    - name: Build Docker image
+      run: docker built -t attack-aware-app1:latest .
+
+
+
 
     - name: Run Trivy (CRITICAL only)
       uses: aquasecurity/trivy-action@master
