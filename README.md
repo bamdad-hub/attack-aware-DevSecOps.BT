@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # attack-aware-DevSecOps
 
 An attack-aware DevSecOps platform that enforces security from CI to runtime,
@@ -18,3 +19,6 @@ and continuously evolves policies based on real attack behavior.
 > This project is built as a learning and demonstration platform for
 > real-world DevSecOps and cloud security practices.
 
+=======
+# attack-aware-DevSecOps.BT
+>>>>>>> 7c589c967504b719d8407b4e36ce94002e7e9d24
