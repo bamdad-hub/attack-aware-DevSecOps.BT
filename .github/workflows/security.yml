@@ -10,17 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Build Docker image
-      run: docker build -t attack-aware-app1:latest .
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Build Docker image
+        run: |
+          docker build -t app:latest .
 
-
-
-    - name: Run Trivy (JSON output)
-      run: |
+      - name: Run Trivy (JSON output)
+        run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/workspace \
@@ -34,13 +32,14 @@ jobs:
           CRITICAL_FIXABLE=$(jq '[.Results[].Vulnerabilities[]? 
             | select(.Severity=="CRITICAL" and .FixedVersion != null)] 
             | length' trivy-report.json)
+
           echo "Fixable CRITICAL vulnerabilities: $CRITICAL_FIXABLE"
 
           if [ "$CRITICAL_FIXABLE" -gt 0 ]; then
-            echo "Policy violation: Fixable CRITICAL vulnerabilities found"
+            echo " Policy violation: Fixable CRITICAL vulnerabilities found"
             exit 1
           else
-            echo "Policy passed,OK"
+            echo "Policy passed"
           fi
 
       - name: Upload Trivy Report
@@ -48,3 +47,4 @@ jobs:
         with:
           name: trivy-report
           path: trivy-report.json
+
