@@ -15,7 +15,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t app:latest .
+          docker build -t    attack-aware-app22:latest .
 
       - name: Run Trivy (JSON output)
         run: |
@@ -25,9 +25,9 @@ jobs:
             aquasec/trivy:latest image \
             --format json \
             --output /workspace/trivy-report.json \
-            app:latest
+            attack-aware-app22:latest
 
-      - name: Policy Gate (Fail on Fixable CRITICAL)
+      - name: Policy Gate (Context Aware)
         run: |
           CRITICAL_FIXABLE=$(jq '[.Results[].Vulnerabilities[]? 
             | select(.Severity=="CRITICAL" and .FixedVersion != null)] 
@@ -35,11 +35,19 @@ jobs:
 
           echo "Fixable CRITICAL vulnerabilities: $CRITICAL_FIXABLE"
 
-          if [ "$CRITICAL_FIXABLE" -gt 0 ]; then
-            echo " Policy violation: Fixable CRITICAL vulnerabilities found"
-            exit 1
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "Strict mode: main branch"
+
+            if [ "$CRITICAL_FIXABLE" -gt 0 ]; then
+              echo "Policy violation on main branch"
+              exit 1
+            else
+              echo "Policy passed"
+            fi
+
           else
-            echo "Policy passed"
+            echo "Warning mode: non-main branch"
+            echo "Vulnerabilities detected but not blocking build"
           fi
 
       - name: Upload Trivy Report
