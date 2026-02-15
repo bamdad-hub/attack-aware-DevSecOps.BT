@@ -80,7 +80,7 @@ jobs:
             }
 
             const body = `
- Security Scan Summary
+               Security Scan Summary
 
 - CRITICAL: ${critical}
 - HIGH: ${high}
