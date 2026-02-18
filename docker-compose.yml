@@ -1,7 +1,8 @@
 services:
   app:
     build: .
-    container_name: attack-aware-app22
+    image: attack-aware-app22:latest
+    container_name: attack-aware-app
     expose:
       - "5000"
 

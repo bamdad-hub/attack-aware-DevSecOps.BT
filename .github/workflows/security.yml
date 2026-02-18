@@ -17,9 +17,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      - name: Build services with Docker Compose
         run: |
-          docker build -t attack-aware-app22:latest .
+          docker compose build
+
+      - name: Start services
+        run: |
+          docker compose up -d
+
+      - name: Wait for app
+        run: |
+          sleep 10
+
+      - name: Test reverse proxy
+        run: |
+         curl -f http://localhost:8080    
 
       - name: Run Trivy (JSON output)
         run: |
@@ -30,6 +42,21 @@ jobs:
             --format json \
             --output /workspace/trivy-report.json \
             attack-aware-app22:latest
+
+       - name: Run Trivy (on nginx image)
+         run: | 
+           docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ${{ github.workspace }}:/workspace \
+            aquasec/trivy:latest image \
+            --format json \
+            --output /workspace/trivy-report.json \
+            nginx:latest
+
+
+
+
+
 
       - name: Policy Gate (Context Aware)
         run: |
