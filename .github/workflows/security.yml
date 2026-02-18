@@ -31,9 +31,9 @@ jobs:
 
       - name: Test reverse proxy
         run: |
-         curl -f http://localhost:8080    
+          curl -f http://localhost:8080
 
-      - name: Run Trivy (JSON output)
+      - name: Run Trivy (App Image)
         run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
@@ -43,20 +43,15 @@ jobs:
             --output /workspace/trivy-report.json \
             attack-aware-app22:latest
 
-       - name: Run Trivy (on nginx image)
-         run: | 
-           docker run --rm \
+      - name: Run Trivy (Nginx Image)
+        run: |
+          docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v ${{ github.workspace }}:/workspace \
-            aquasec/trivy:latest image \
-            --format json \
-            --output /workspace/trivy-report.json \
-            nginx:latest
+            aquasec/trivy:latest image nginx:latest
 
-
-
-
-
+      - name: Stop services
+        run: |
+          docker compose down
 
       - name: Policy Gate (Context Aware)
         run: |
